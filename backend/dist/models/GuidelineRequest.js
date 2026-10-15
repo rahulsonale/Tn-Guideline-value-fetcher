@@ -28,6 +28,14 @@ const guidelineRequestSchema = new mongoose_1.Schema({
         type: [mongoose_1.Schema.Types.Mixed],
         default: [],
     },
+    result: {
+        type: mongoose_1.Schema.Types.Mixed,
+        default: null,
+    },
+    errorMessage: {
+        type: String,
+        default: null,
+    },
 }, {
     timestamps: true,
     collection: "guideline_requests",

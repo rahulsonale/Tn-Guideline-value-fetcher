@@ -89,6 +89,70 @@ router.post("/:id/screenshot", async (req, res) => {
   }
 });
 
+router.patch("/:id/result", async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      res.status(400).json({ error: "Invalid request ID" });
+      return;
+    }
+
+    const { status, result, errorMessage, flowUsed } = req.body ?? {};
+    const allowedStatuses = ["SUCCESS", "NO_VALUE_FOUND", "FAILED"];
+
+    if (!allowedStatuses.includes(status)) {
+      res.status(400).json({
+        error: "Status must be SUCCESS, NO_VALUE_FOUND, or FAILED",
+      });
+      return;
+    }
+
+    if (status === "SUCCESS" && (result === undefined || result === null)) {
+      res.status(400).json({ error: "A result is required for SUCCESS" });
+      return;
+    }
+
+    if (
+      status === "FAILED" &&
+      (typeof errorMessage !== "string" || errorMessage.trim().length === 0)
+    ) {
+      res.status(400).json({ error: "An errorMessage is required for FAILED" });
+      return;
+    }
+
+    if (errorMessage !== undefined && errorMessage !== null && typeof errorMessage !== "string") {
+      res.status(400).json({ error: "errorMessage must be a string or null" });
+      return;
+    }
+
+    if (flowUsed !== undefined && flowUsed !== null && typeof flowUsed !== "string") {
+      res.status(400).json({ error: "flowUsed must be a string or null" });
+      return;
+    }
+
+    const request = await GuidelineRequest.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          status,
+          result: result ?? null,
+          errorMessage: errorMessage ?? null,
+          ...(flowUsed !== undefined ? { flowUsed } : {}),
+        },
+      },
+      { new: true, runValidators: true },
+    ).lean();
+
+    if (!request) {
+      res.status(404).json({ error: "Guideline request not found" });
+      return;
+    }
+
+    res.json(request);
+  } catch (error) {
+    console.error("Failed to update guideline request result:", error);
+    res.status(500).json({ error: "Failed to update guideline request result" });
+  }
+});
 router.get("/:id", async (req, res) => {
   try {
     if (!mongoose.isValidObjectId(req.params.id)) {

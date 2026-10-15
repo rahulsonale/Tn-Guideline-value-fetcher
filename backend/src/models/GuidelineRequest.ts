@@ -14,6 +14,8 @@ interface IGuidelineRequest {
   flowUsed?: string | null;
   attempts: unknown[];
   screenshots: unknown[];
+  result?: unknown;
+  errorMessage?: string | null;
 }
 
 const guidelineRequestSchema = new Schema<IGuidelineRequest>(
@@ -42,6 +44,14 @@ const guidelineRequestSchema = new Schema<IGuidelineRequest>(
     screenshots: {
       type: [Schema.Types.Mixed],
       default: [],
+    },
+    result: {
+      type: Schema.Types.Mixed,
+      default: null,
+    },
+    errorMessage: {
+      type: String,
+      default: null,
     },
   },
   {
