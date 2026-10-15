@@ -1,0 +1,90 @@
+<main class="popup">
+  <h1>TN Guideline Value</h1>
+  <p class="subtitle">Search property guideline values</p>
+
+  <form (ngSubmit)="submitSearch()">
+    <fieldset>
+      <legend>Search by</legend>
+
+      <label class="radio-option">
+        <input
+          type="radio"
+          name="searchMode"
+          [checked]="searchMode === 'street'"
+          (change)="searchMode = 'street'"
+        />
+        Street name
+      </label>
+
+      <label class="radio-option">
+        <input
+          type="radio"
+          name="searchMode"
+          [checked]="searchMode === 'survey'"
+          (change)="searchMode = 'survey'"
+        />
+        Survey number
+      </label>
+    </fieldset>
+
+    <label for="zone">Zone</label>
+    <input
+      id="zone"
+      name="zone"
+      type="text"
+      placeholder="For example, Chennai"
+      [(ngModel)]="zone"
+      required
+    />
+
+    <label for="sro">Sub Registrar Office</label>
+    <input
+      id="sro"
+      name="sroName"
+      type="text"
+      placeholder="For example, Adyar"
+      [(ngModel)]="sroName"
+      required
+    />
+
+    <label for="village">Registration Village</label>
+    <input
+      id="village"
+      name="village"
+      type="text"
+      placeholder="For example, Adyar"
+      [(ngModel)]="village"
+      required
+    />
+
+    @if (searchMode === 'street') {
+      <label for="streetName">Street name</label>
+      <input
+        id="streetName"
+        name="streetName"
+        type="text"
+        placeholder="Enter a street name"
+        [(ngModel)]="streetName"
+        required
+      />
+    } @else {
+      <label for="surveyNumber">Survey number</label>
+      <input
+        id="surveyNumber"
+        name="surveyNumber"
+        type="text"
+        placeholder="Enter a survey number"
+        [(ngModel)]="surveyNumber"
+        required
+      />
+    }
+
+    <button type="submit" [disabled]="isSubmitting()">
+      {{ isSubmitting() ? 'Saving…' : 'Search' }}
+    </button>
+  </form>
+
+  @if (message()) {
+    <p class="message" role="status">{{ message() }}</p>
+  }
+</main>
